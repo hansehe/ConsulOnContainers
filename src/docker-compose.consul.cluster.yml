@@ -1,0 +1,52 @@
+version: '3.5'
+
+services:
+  
+  consul-server-1-bootstrapper:
+    image: consul:latest
+    hostname: consul-server-1-bootstrapper
+    ports:
+      - 8400:8400 # RPC exchanges by the CLI
+      - 8500:8500 # Used for HTTP API and web interface
+      - 8600:8600 # Used for DNS server
+      - 8600:8600/udp
+    command: "agent -server -bootstrap-expect 3 -ui -disable-host-node-id -client 0.0.0.0"
+
+  consul-server-2:
+    image: consul:latest
+    hostname: consul-server-2
+    command: "agent -server -join consul-server-1-bootstrapper -disable-host-node-id"
+    depends_on: 
+      - consul-server-1-bootstrapper
+
+  consul-server-3:
+    image: consul:latest
+    hostname: consul-server-3
+    command: "agent -server -join consul-server-1-bootstrapper -disable-host-node-id"
+    depends_on:
+      - consul-server-1-bootstrapper
+
+  consul-agent-1:
+    image: consul:latest
+    hostname: consul-agent-1
+    command: "agent -join consul-server-1-bootstrapper -disable-host-node-id"
+    depends_on:
+      - consul-server-1-bootstrapper
+
+  consul-agent-2:
+    image: consul:latest
+    hostname: consul-agent-2
+    command: "agent -server -join consul-server-1-bootstrapper -disable-host-node-id"
+    depends_on:
+      - consul-server-1-bootstrapper
+
+  consul-agent-3:
+    image: consul:latest
+    hostname: consul-agent-3
+    command: "agent -join consul-server-1-bootstrapper -disable-host-node-id"
+    depends_on:
+      - consul-server-1-bootstrapper
+
+networks:
+  backend_network:
+    external: true

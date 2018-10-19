@@ -1,0 +1,19 @@
+version: '3.4'
+
+services:
+  api-service:
+    image: api-service
+    hostname: api-service
+    build:
+      context: ./APIService/APIService
+      dockerfile: Dockerfile
+    environment:
+      - RUNNING_IN_CONTAINER=true
+    ports:
+      - 5000:80
+    networks:
+      - backend_network
+
+networks:
+  backend_network:
+    external: true
