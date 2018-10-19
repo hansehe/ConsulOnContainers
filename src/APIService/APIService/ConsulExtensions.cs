@@ -64,7 +64,7 @@ namespace APIService
             {
                 DeregisterCriticalServiceAfter = TimeSpan.FromSeconds(10),
                 Interval = TimeSpan.FromSeconds(2),
-                TCP = $"{ip}"
+                TCP = $"{ip}:{uri.Port}"
             };
             
             var httpCheck = new AgentServiceCheck
