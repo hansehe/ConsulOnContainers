@@ -10,7 +10,7 @@ namespace ClientService
 {
     class Program
     {
-        public static bool InContainer => 
+        private static bool InContainer => 
             Environment.GetEnvironmentVariable("RUNNING_IN_CONTAINER") == "true";
 
         private static string ConsulHost => InContainer ? "consul-server-1-bootstrapper" : "localhost";
@@ -28,12 +28,12 @@ namespace ClientService
 
         private static async Task ClientTask(string[] tags)
         {
-            var serverUris = await GetServerUris(tags);
+            var serverUris = await GetApiServerUris(tags);
             var serverUri = SelectRandomUri(serverUris);
-            await PollServerUris(serverUri);
+            await PollApiServer(serverUri);
         }
 
-        private static async Task PollServerUris(Uri uri)
+        private static async Task PollApiServer(Uri uri)
         {
             var client = new HttpClient();
             var requestUri = new Uri(uri, "api/values");
@@ -59,7 +59,7 @@ namespace ClientService
             return uris[randomNumber];
         }
 
-        private static async Task<Uri[]> GetServerUris(string[] tags)
+        private static async Task<Uri[]> GetApiServerUris(string[] tags)
         {
             var serverUris = new List<Uri>();
             var consulClient = new ConsulClient(c => c.Address = new Uri($"http://{ConsulHost}:8500"));
