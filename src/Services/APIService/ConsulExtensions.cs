@@ -46,8 +46,9 @@ namespace APIService
             var uri = new Uri(address);
             var ip = Dns.GetHostEntry(uri.Host).AddressList.FirstOrDefault(x => x.AddressFamily == AddressFamily.InterNetwork);
             
-            // Get configured service name and id
-            var serviceId = configuration["consulConfig:serviceID"];
+            // Get configured service name and id, and update id with a random number for replica handling
+            var random = new Random();
+            var serviceId = configuration["consulConfig:serviceID"] + $"_{random.Next().ToString()}";
             var serviceName = configuration["consulConfig:serviceName"];
             var serviceTags = configuration.GetSection("consulConfig:serviceTags").Get<List<string>>().ToArray();
             
