@@ -5,7 +5,7 @@ services:
     image: api-service
     hostname: api-service
     build:
-      context: ./APIService/APIService
+      context: ./Services/APIService
       dockerfile: Dockerfile
     environment:
       - RUNNING_IN_CONTAINER=true
@@ -18,7 +18,7 @@ services:
     image: client-service
     hostname: client-service
     build:
-      context: ./APIService/ClientService
+      context: ./Services/ClientService
       dockerfile: Dockerfile
     environment:
       - RUNNING_IN_CONTAINER=true
