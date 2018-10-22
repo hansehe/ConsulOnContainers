@@ -1,18 +1,28 @@
 version: '3.4'
 
 services:
-  api-service:
+  api-service-1: &api-service
     image: api-service
-    hostname: api-service
+    hostname: api-service-1
     build:
       context: ./Services/APIService
       dockerfile: Dockerfile
     environment:
       - RUNNING_IN_CONTAINER=true
-    ports:
-      - 5000:80
     networks:
       - backend_network
+
+  api-service-2:
+    <<: *api-service
+    hostname: api-service-2
+
+  api-service-3:
+    <<: *api-service
+    hostname: api-service-3
+
+  api-service-4:
+    <<: *api-service
+    hostname: api-service-4
 
   client-service:
     image: client-service
