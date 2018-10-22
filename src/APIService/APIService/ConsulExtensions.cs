@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 namespace APIService
 {
@@ -33,18 +32,12 @@ namespace APIService
         
         public static IApplicationBuilder RegisterWithConsul(this IApplicationBuilder app)
         {
-            // Retrieve Consul client from DI
             var consulClient = app.ApplicationServices
                 .GetRequiredService<IConsulClient>();
             var configuration = app.ApplicationServices
                 .GetRequiredService<IConfiguration>();
             var lifetime = app.ApplicationServices
                 .GetRequiredService<IApplicationLifetime>();
-            
-            // Setup logger
-            var loggingFactory = app.ApplicationServices
-                .GetRequiredService<ILoggerFactory>();
-            var logger = loggingFactory.CreateLogger<IApplicationBuilder>();
 
             // Get server URI and IP address
             var features = app.Properties["server.Features"] as FeatureCollection;
@@ -62,14 +55,14 @@ namespace APIService
             //     - http://michaco.net/blog/ServiceDiscoveryAndHealthChecksInAspNetCoreWithConsul
             var tcpCheck = new AgentServiceCheck()
             {
-                DeregisterCriticalServiceAfter = TimeSpan.FromSeconds(10),
+                DeregisterCriticalServiceAfter = TimeSpan.FromSeconds(5),
                 Interval = TimeSpan.FromSeconds(2),
                 TCP = $"{ip}:{uri.Port}"
             };
             
             var httpCheck = new AgentServiceCheck
             {
-                DeregisterCriticalServiceAfter = TimeSpan.FromSeconds(10),
+                DeregisterCriticalServiceAfter = TimeSpan.FromSeconds(5),
                 Interval = TimeSpan.FromSeconds(2),
                 HTTP = $"{uri.Scheme}://{ip}:{uri.Port}/status"
             };
@@ -85,14 +78,14 @@ namespace APIService
                 Checks = new[] { tcpCheck, httpCheck }
             };
 
-            logger.LogInformation("Registering with Consul");
+            Console.WriteLine("Registering with Consul");
             Console.WriteLine($"IP: {ip}");
-            Console.WriteLine($"hostname: {uri}");
             consulClient.Agent.ServiceDeregister(registration.ID).Wait();
             consulClient.Agent.ServiceRegister(registration).Wait();
 
+            // Enable deregistration of service from consul during clean shutdown
             lifetime.ApplicationStopping.Register(() => {
-                logger.LogInformation("Deregistering from Consul");
+                Console.WriteLine("Deregistering from Consul");
                 consulClient.Agent.ServiceDeregister(registration.ID).Wait(); 
             });
 
