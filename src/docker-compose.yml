@@ -1,4 +1,4 @@
-version: '3.4'
+version: '3.5'
 
 services:
   api-service-1: &api-service
@@ -7,8 +7,6 @@ services:
     build:
       context: ./Services/APIService
       dockerfile: Dockerfile
-    environment:
-      - RUNNING_IN_CONTAINER=true
     networks:
       - backend_network
 
@@ -30,11 +28,8 @@ services:
     build:
       context: ./Services/ClientService
       dockerfile: Dockerfile
-    environment:
-      - RUNNING_IN_CONTAINER=true
     networks:
       - backend_network
 
 networks:
   backend_network:
-    external: true

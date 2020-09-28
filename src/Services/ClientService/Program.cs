@@ -29,6 +29,9 @@ namespace ClientService
         private static async Task ClientTask(string[] tags)
         {
             var serverUris = await GetApiServerUris(tags);
+            if (serverUris.Length <= 0) {
+                return;
+            }
             var serverUri = SelectRandomUri(serverUris);
             await PollApiServer(serverUri);
         }
