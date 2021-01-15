@@ -25,6 +25,6 @@ docker-compose -f src/docker-compose.consul.cluster.yml -f src/docker-compose.ym
 ```
 
 ## Nice To Know
-Consul is deployed in a cluster of Consul services, and there should only be one Consul service on a each node in the cluster, thus it is not possible to run this concept in Swarm mode. Each Consul service will be in conflict if they are running on a single node if the cluster is running in Swarm mode. The concept is therefore deployed with bridge networks running on a single node.
+Consul is deployed in a cluster of Consul services, and there should only be one Consul service on each node in the cluster, thus it is not possible to run this concept in Swarm mode. Each Consul service will be in conflict if they are running on a single node if the cluster is running in Swarm mode. The concept is therefore deployed with bridge networks running on a single node.
 - Wanna know more about consul? 
     - https://www.consul.io/docs/internals/architecture.html
